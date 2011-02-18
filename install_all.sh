@@ -5,12 +5,12 @@
 INSTALL_ALL_SH="install_all.sh"
 
 # Installs files from the "stript3" project
-# 
+#
 # It looks for the file files.s3 in each subdirectory from underneeth it's
 # executed recursivly. Each files.s3 is listing the files to be installed from
 # that directory. A simple way to create such a file:
-# 
-# ls | grep -v README | grep -v files.s3 > files.s3 
+#
+# ls | grep -v README | grep -v files.s3 > files.s3
 #
 # Or recursivly:
 #
@@ -37,17 +37,17 @@ fi
 
 
 function install_all() {
-	local LFILES=$( find . -name files.s3 ) 
+	local LFILES=$( find . -name files.s3 )
 	local LF
 	local F
 
-	for LF in $LFILES;  do 
-	
+	for LF in $LFILES;  do
+
 		#Make LF_PATH escapabele so it might pass sed expanded
 		local LF_PATH=$( dirname $LF | sed -e 's/\//\\\//g' )
-		
-		IFILES=$( ( 
-			cd $( dirname $LF) 
+
+		IFILES=$( (
+			cd $( dirname $LF)
 			cat files.s3 | \
 				sed -e "s/\(^\)\(.*\)/$LF_PATH\/\2/" | \
 					sed -e 's/^\.\///'
