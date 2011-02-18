@@ -1,5 +1,5 @@
 #!/bin/bash
-# Installs files from the "script3" project
+# Installs a file from the "script3" project
 
 # NOTE: This is not a good example to use as a template
 # use ebasename.sh instead for that.
@@ -8,10 +8,6 @@ INSTALL_S3_SH="install_s3.sh"
 
 if [ "x${BINDIR}" == "x" ]; then
 	BINDIR=$HOME/bin
-fi
-
-if [ "x${REPO_NAME}" == "x" ]; then
-	REPO_NAME="script3"
 fi
 
 set -e
@@ -35,7 +31,7 @@ if [ -z $EBASENAME_SH ]; then
 fi
 
 #Installs arg #1 from where is at, to $BINDIR
-function install_bin() {
+function install_s3() {
 	local SRC_FILE=$(pwd)/$1
 
 	#This one is tricky, it needs to cover two cases
@@ -62,7 +58,7 @@ function install_bin() {
 		sed -e 's/^\///' | 			\
 		sed -e 's/\//./g' )
 
-	echo $DST_FILE
+	#echo $DST_FILE
 
 	if [ ! -f $SRC_FILE ]; then
 		echo "Error: Trying to install [$SRC_FILE] which doesnt exist."
@@ -78,6 +74,6 @@ function install_bin() {
 
 if [ "$INSTALL_S3_SH" == $( ebasename $0 ) ]; then
   #Not sourced, do something with this.
-  install_bin $1
+  install_s3 $1
 fi
 

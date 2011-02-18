@@ -10,12 +10,17 @@ INSTALL_ALL_SH="install_all.sh"
 # executed recursivly. Each files.s3 is listing the files to be installed from
 # that directory. A simple way to create such a file:
 # 
-# ls | grep -v README > files.s3 
+# ls | grep -v README | grep -v files.s3 > files.s3 
 #
 # Or recursivly:
 #
-# DIRS=$( find . -type d | grep -v .git ); for D in $DIRS; \
-#   do (cd $D; ls | grep -v README > files.s3) ;  done
+# DIRS=$( find . -type d | grep -v .git ); for D in $DIRS; do \
+#  (	cd $D; ls -F | \
+#		grep -v README | \
+#		grep -v files.s3 | \
+#		egrep '\*$' | \
+#		sed -e 's/\*$//' > files.s3 \
+#  );  done
 #
 # This script is a core part of the 'script3' script library
 
@@ -32,9 +37,25 @@ fi
 
 
 function install_all() {
-	local DIRS=$( find . -name files.s3 ) 
-	for D in $DIRS;  do 
-		(cd $D; cat files.s3 );  
+	local LFILES=$( find . -name files.s3 ) 
+	local LF
+	local F
+
+	for LF in $LFILES;  do 
+	
+		#Make LF_PATH escapabele so it might pass sed expanded
+		local LF_PATH=$( dirname $LF | sed -e 's/\//\\\//g' )
+		
+		IFILES=$( ( 
+			cd $( dirname $LF) 
+			cat files.s3 | \
+				sed -e "s/\(^\)\(.*\)/$LF_PATH\/\2/" | \
+					sed -e 's/^\.\///'
+		) )
+		for F in $IFILES; do
+			#echo $F
+			install_s3 $F
+		done
 	done
 }
 
