@@ -2,6 +2,8 @@
 # Author: Michael Ambrus (ambrmi09@gmail.com)
 # 2011-02-18
 
+if [ -z $INSTALL_ALL_SH ]; then
+
 INSTALL_ALL_SH="install_all.sh"
 
 # Installs files from the "stript3" project
@@ -35,7 +37,6 @@ if [ -z $INSTALL_S3_SH ]; then
 	fi
 fi
 
-
 function install_all() {
 	local LFILES=$( find . -name files.s3 )
 	local LF
@@ -63,4 +64,6 @@ if [ "$INSTALL_ALL_SH" == $( ebasename $0 ) ]; then
 	#Not sourced, do something with this.
 	install_all $@
 	exit $?
+fi
+
 fi

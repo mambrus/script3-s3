@@ -4,6 +4,8 @@
 # NOTE: This is not a good example to use as a template
 # use ebasename.sh instead for that.
 
+if [ -z $INSTALL_S3_SH ]; then
+
 INSTALL_S3_SH="install_s3.sh"
 
 if [ "x${BINDIR}" == "x" ]; then
@@ -73,7 +75,8 @@ function install_s3() {
 }
 
 if [ "$INSTALL_S3_SH" == $( ebasename $0 ) ]; then
-  #Not sourced, do something with this.
-  install_s3 $1
+	#Not sourced, do something with this.
+	install_s3 $1
 fi
 
+fi

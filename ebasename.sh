@@ -2,6 +2,8 @@
 # Author: Michael Ambrus (ambrmi09@gmail.com)
 # 2011-02-18
 
+if [ -z $EBASENAME_SH ]; then
+
 EBASENAME_SH="ebasename.sh"
 
 # This script works as the basename command, except that it also
@@ -21,4 +23,6 @@ if [ "$EBASENAME_SH" == $( ebasename $0 ) ]; then
 	#Not sourced, do something with this.
 	ebasename $@
 	exit $?
+fi
+
 fi

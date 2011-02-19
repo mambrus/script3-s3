@@ -2,6 +2,8 @@
 # Author: Michael Ambrus (ambrmi09@gmail.com)
 # 2011-01-22
 
+if [ -z $TEST_INSTALL_PKG_SH ]; then
+
 TEST_INSTALL_PKG_SH="test_install_pkg.sh"
 
 # Tests for a package, and if not installed then install it
@@ -32,9 +34,7 @@ function test_install_pkg() {
 	return $RC
 }
 
-if [ -z $EBASENAME_SH ]; then
-	source s3.ebasename.sh
-fi
+source s3.ebasename.sh
 
 if [ "$TEST_INSTALL_PKG_SH" == $( ebasename $0 ) ]; then
 	#Not sourced, do something with this.
@@ -42,4 +42,6 @@ if [ "$TEST_INSTALL_PKG_SH" == $( ebasename $0 ) ]; then
 
 	test_install_pkg $@
 	exit $?
+fi
+
 fi
