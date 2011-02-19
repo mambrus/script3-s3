@@ -2,4 +2,6 @@ ebasename.sh
 install_all.sh
 install_s3.sh
 ssh_keypair.sh
+test_install_bin.sh
+test_install_pkg.sh
 user_response.sh
