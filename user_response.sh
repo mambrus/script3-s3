@@ -2,6 +2,8 @@
 #Author: Michael Ambrus (michael.ambrus@sonyericsson.com)
 # 2010-03-01
 
+if [ -z $USER_RESPONSE_SH ]; then
+
 USER_RESPONSE_SH="user_response.sh"
 
 #Example of various ways to use this function:
@@ -10,7 +12,10 @@ USER_RESPONSE_SH="user_response.sh"
 #
 # 2)
 #	set +e
-#	ask_user_continue "Continue with patching project [$PROJ]? (Y/n)" "Patching..." "Skipping..."
+#	ask_s3.user_continue \
+#		"Continue with patching project [$PROJ]? (Y/n)"\
+#		"Patching..."\
+#		"Skipping..."
 #	RC=$?
 #	:
 # 	set -e
@@ -81,4 +86,6 @@ if [ "$USER_RESPONSE_SH" == $( basename $0 ) ]; then
   #Not sourced, do something with this.
   ask_user_continue "$@"
   exit $?
+fi
+
 fi
