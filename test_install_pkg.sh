@@ -38,7 +38,8 @@ source s3.ebasename.sh
 
 if [ "$TEST_INSTALL_PKG_SH" == $( ebasename $0 ) ]; then
 	#Not sourced, do something with this.
-	source user_response.sh
+	set -e
+	source s3.user_response.sh
 
 	test_install_pkg $@
 	exit $?
