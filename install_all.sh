@@ -14,16 +14,6 @@ INSTALL_ALL_SH="install_all.sh"
 #
 # ls | grep -v README | grep -v files.s3 > files.s3
 #
-# Or recursivly:
-#
-# DIRS=$( find . -type d | grep -v .git ); for D in $DIRS; do \
-#  (	cd $D; ls -F | \
-#		grep -v README | \
-#		grep -v files.s3 | \
-#		egrep '\*$' | \
-#		sed -e 's/\*$//' > files.s3 \
-#  );  done
-#
 # This script is a core part of the 'script3' script library
 
 set -e
@@ -34,6 +24,22 @@ if [ -z $INSTALL_S3_SH ]; then
 	else
 		#Try locally
 		source $(dirname $0)/install_s3.sh
+	fi
+fi
+if [ -z $USER_RESPONSE_SH ]; then
+	if [ ! -z $(which s3.user_response.sh) ]; then
+		source s3.user_response.sh
+	else
+		#Try locally
+		source $(dirname $0)/user_response.sh
+	fi
+fi
+if [ -z $FILES_S3_SH ]; then
+	if [ ! -z $(which s3.files_s3.sh) ]; then
+		source s3.files_s3.sh
+	else
+		#Try locally
+		source $(dirname $0)/files_s3.sh
 	fi
 fi
 
@@ -62,6 +68,12 @@ function install_all() {
 
 if [ "$INSTALL_ALL_SH" == $( ebasename $0 ) ]; then
 	#Not sourced, do something with this.
+	
+	ask_user_continue "Would you like to omit updating all files.s3 first? (Y/n)" \
+		"Omiting"					\
+		"Updating all files.s3" ||	\
+			files_s3
+	
 	install_all $@
 	exit $?
 fi
