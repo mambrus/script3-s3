@@ -21,7 +21,13 @@ function files_s3() {
 	);  done
 }
 
-source s3.ebasename.sh
+#Need to handle cases where s3 isn't installed yet
+if [ ! -z $(which s3.ebasename.sh) ]; then
+	source s3.ebasename.sh
+else
+	#Try locally
+	source $(dirname $0)/ebasename.sh
+fi
 
 if [ "$FILES_S3_SH" == $( ebasename $0 ) ]; then
 	#Not sourced, do something with this.
