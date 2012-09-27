@@ -147,7 +147,8 @@ function ssh_keypair() {
 	echo "~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"
 }
 
-if [ "$SSH_KEYPAIR_SH" == $( basename $0 ) ]; then
+source s3.ebasename.sh
+if [ "$SSH_KEYPAIR_SH" == $( ebasename $0 ) ]; then
 	#The script is not sourced. I.e. it's actually supposed do something"
 	ssh_keypair $@
 fi
