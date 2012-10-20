@@ -19,8 +19,8 @@ function files_s3() {
 		#Include only executable files, or files starting with '.' \
 		egrep '\*$|^\.[[:alpha:]]' |	\
 		sed -e 's/\*$//' |				\
-		#Avoid temporary files lingering around (vim swap-files e.t.a.) \
-		egrep -v '\.swp$' |				\
+		#Avoid special files lingering around (vim swap-files e.t.a.) \
+		egrep -v '\.swp$|^.git/$' |				\
 		cat -- > files.s3
 	);  done
 }
