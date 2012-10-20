@@ -71,7 +71,6 @@ function install_s3() {
 
 	rm -f "${BINDIR}/${DST_FILE}"
 	ln -s "$SRC_FILE"     "${BINDIR}/${DST_FILE}"
-	chmod a+x "${BINDIR}/${DST_FILE}"
 }
 
 if [ "$INSTALL_S3_SH" == $( ebasename $0 ) ]; then
