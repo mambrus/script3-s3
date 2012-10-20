@@ -11,13 +11,17 @@ FILES_S3_SH="files_s3.sh"
 # The script is a core part of the 'script3' script library
 
 function files_s3() {
-	local DIRS=$( find . -type d | egrep -v '\.git' ); for D in $DIRS; 
+	local DIRS=$( find . -type d | egrep -v '\.git' ); for D in $DIRS;
 	do ( 								\
-		cd $D; ls -F |					\
+		cd $D; ls -aF |					\
 		grep -v README |				\
 		grep -v 'files\.s3' |			\
-		egrep '\*$' |					\
-		sed -e 's/\*$//' > files.s3		\
+		#Include only executable files, or files starting with '.' \
+		egrep '\*$|^\.[[:alpha:]]' |	\
+		sed -e 's/\*$//' |				\
+		#Avoid temporary files lingering around (vim swap-files e.t.a.) \
+		egrep -v '\.swp$' |				\
+		cat -- > files.s3
 	);  done
 }
 
