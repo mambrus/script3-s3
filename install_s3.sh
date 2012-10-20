@@ -60,6 +60,9 @@ function install_s3() {
 		sed -e 's/^\///' | 			\
 		sed -e 's/\//./g' )
 
+	echo "${1}" | egrep '^\.|\/\.' >/dev/null && \
+		DST_FILE=".${DST_FILE}"
+
 	#echo $DST_FILE
 
 	if [ ! -f $SRC_FILE ]; then
