@@ -38,7 +38,7 @@ if [ "$UNINSTALL_ALL" == $( ebasename $0 ) ]; then
 	set +u
 	ask_user_continue \
 		"Brutally remove all links from [${BINDIR}] to [${S3DIR}]? (Y/n)" || exit $?
-		
+
 	set -u
 
 	uninstall_all ${BINDIR} ${S3DIR}

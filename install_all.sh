@@ -68,12 +68,12 @@ function install_all() {
 
 if [ "$INSTALL_ALL_SH" == $( ebasename $0 ) ]; then
 	#Not sourced, do something with this.
-	
+
 	ask_user_continue "Would you like to omit updating all files.s3 first? (Y/n)" \
 		"Omiting"					\
 		"Updating all files.s3" ||	\
 			files_s3
-	
+
 	install_all $@
 	exit $?
 fi
