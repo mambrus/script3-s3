@@ -6,7 +6,8 @@ if [ -z $FILES_S3_SH ]; then
 
 FILES_S3_SH="files_s3.sh"
 
-# Creates/updates the set of files.s3 in the structure
+# Creates/updates the set of files.s3 in the current subdirectory
+# recursivly.
 #
 # The script is a core part of the 'script3' script library
 

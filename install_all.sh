@@ -69,10 +69,13 @@ function install_all() {
 if [ "$INSTALL_ALL_SH" == $( ebasename $0 ) ]; then
 	#Not sourced, do something with this.
 
-	ask_user_continue "Would you like to omit updating all files.s3 first? (Y/n)" \
-		"Omiting"					\
-		"Updating all files.s3" ||	\
-			files_s3
+	echo "This will install S3 in ~/bin." \
+		 "Any previous installation will be overwritten/updated. Make sure you have"\
+		 "write permissions both in the installation directory and in the source."
+	ask_user_continue || exit 1
+
+	#Create/update all files.s3 files
+	files_s3
 
 	install_all $@
 	exit $?
