@@ -36,24 +36,74 @@ fi
 function install_s3() {
 	local SRC_FILE=$(pwd)/$1
 
-	#This one is tricky, it needs to cover two cases
+	#This one is tricky. There exist 4 cases, we need to cover 3.
 	local OPWD=$(pwd)
+
 	cd $( dirname $0 )
+	#Whe use the script itself to figure out which s3 it belongs to
 	if  [ -h $( basename $0 ) ]; then
+		#Case 2.
 		#We're executing the link. Follow it to get the s3 directory
 		cd $( dirname $( ls -al $( basename $0 ) | cut -f2 -d">" ) )
-		#exit 0
 		cd ..
 		local S3_PATH=$(pwd)
 	else
+		#Case 1.
+		#This is the case when no previous s3 has been installed
+		#I.e Installing by cd mypath/source3; s3/install_all
 		cd ..
 		local S3_PATH=$(pwd)
 	fi
 	cd $OPWD
 
+	#Case 3.
+	#S3_PATH must be a part of SRC_FILE (the one we're installing), or it's
+	#*not* part of this s3 (but we want to install it anyway). Installing
+	#without this case will also work, but the names in ~/bin are too long as
+	#the become full path's, henche worthelss.
+
+	#In this case it's is assumed that the installer wants to give the link
+	#a name relative to where he stands. Allow that by detecting the case.
+	#NOTE: these installs will nu be uninstallable by uninstall_all.sh and
+	#need to be unistalled manually.
+	BELONGS_TO_THIS_S3=$(echo -n "${S3_PATH};${OPWD}" | awk -F";" '{
+		rc=index($2,$1);
+		if (rc == 0)
+			printf("no\n");
+		else
+			printf("yes\n");
+	}')
+
+	if [ "X${BELONGS_TO_THIS_S3}" == "Xyes" ]; then
+		echo "All OK" > /dev/null
+	elif [ "X${BELONGS_TO_THIS_S3}" == "Xno" ]; then
+		echo "Warning: [${1}] does not belong to S3 in [${S3_PATH}]" 1>&2
+		set +e
+		ask_user_continue \
+		   "Install anyway (fake S3_DIR)?"\
+" NOTE: Any unistallations bust be done manually (Y/n)" \
+		   "Installing..." \
+		   "Skipping..." \
+		   "Y"
+		RC=$?
+		set -e
+
+		if [ $RC -eq 0 ]; then
+			#Fake S3_DIR path
+			S3_PATH="${OPWD}"
+		else
+			return 1
+		fi
+	else
+		echo "Internal Error: Can't install [${1}->${S3_PATH}]" 1>&2
+		exit 0
+	fi
+
 	#Make S3_PATH escapabele so it might pass sed expanded
 	local DS3_PATH=$( echo $S3_PATH | sed -e 's/\//\\\//g' )
 
+	#Subtract the absolute path part to S3 itself and convert
+	#slashes to dots in the rest so to be usable as filenames.
 	local DST_FILE=$( \
 		echo $SRC_FILE | 			\
 		sed -e "s/$DS3_PATH//" | 	\
