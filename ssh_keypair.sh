@@ -126,7 +126,9 @@ function ssh_keypair() {
 	local_key_copy "$REMOTE_USER" "$REMOTE_SERVER" "$TS"
 
 	echo "~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"
-	echo "Transfering serverside script (you will need to enter password)"
+	echo "Transfering serverside script using the following command:"
+	echo "scp \"/tmp/${SRV_SCRIPT}" "${REMOTE_USER}@${REMOTE_SERVER}:/tmp/${SRV_SCRIPT}\""
+	echo "(You will need to enter password)"
 	echo "~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"
 	echo; echo
 	scp "/tmp/${SRV_SCRIPT}" "${REMOTE_USER}@${REMOTE_SERVER}:/tmp/${SRV_SCRIPT}"
@@ -135,7 +137,9 @@ function ssh_keypair() {
 	#Done with it, remove local copy
 	rm "/tmp/${SRV_SCRIPT}"
 	echo "~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"
-	echo "Running serverside script (you will need to enter password)"
+	echo "Running serverside script using the followin command:"
+	echo "ssh \"${REMOTE_USER}@${REMOTE_SERVER}\" \"/tmp/${SRV_SCRIPT}\""
+	echo "(You will need to enter password)"
 	echo "~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"
 	ssh "${REMOTE_USER}@${REMOTE_SERVER}" "/tmp/${SRV_SCRIPT}"
 	echo; echo
