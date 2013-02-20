@@ -17,7 +17,7 @@ fi
 backtitle="SSH key creation and remote transfer & pairing"
 FQDN="localhost"
 RUSER="$USER"
-PASS="###########"
+PASS=""
 
 function print_help() {
 	cat $(which .s3..ssh_keypair.sh) | \
@@ -25,9 +25,29 @@ function print_help() {
 	grep '^#' | sed -e 's/^#//'
 }
 
+function handle_rc_ui() {
+	local RC=$1
+
+	case $RC in
+	2)
+		help_ui
+		;;
+	1)
+		$DIALOG --yesno "Are you sure?" 0 0 && exit 0
+		RC=999
+		;;
+	0)
+		;;
+	*)
+		echo "Internal error: RC=${RC}" 1>&2
+		;;
+	esac
+	return $RC
+}
+
 function password_ui() {
-	local RC=0
-	while [ $RC -ne 1 ] && [ $RC -ne 250 ]; do
+	local RC=1
+	while [ $RC -ne 0 ] ; do
 		exec 3>&1
 		PASS=$($DIALOG \
         	    --clear \
@@ -36,12 +56,17 @@ function password_ui() {
             	--insecure \
             	--passwordbox "${RUSER}@${FQDN} password:" 0 0 "$PASS" \
 		2>&1 1>&3 )
+		RC=$?
 		exec 3>&-
+
+		handle_rc_ui $RC
+		RC=$?
 	done
 }
 
 function fqdn_ui() {
-	while [ $RC -ne 1 ] && [ $RC -ne 250 ]; do
+	local RC=1
+	while [ $RC -ne 0 ] ; do
 		exec 3>&1
 		FQDN=$($DIALOG \
 	            --clear \
@@ -49,12 +74,17 @@ function fqdn_ui() {
 	            --backtitle "$backtitle" \
 	            --inputbox "Remote host-name:" 0 0 "$FQDN" \
 		2>&1 1>&3 )
+		RC=$?
 		exec 3>&-
+
+		handle_rc_ui $RC
+		RC=$?
 	done
 }
 
 function ruser_ui() {
-	while [ $RC -ne 1 ] && [ $RC -ne 250 ]; do
+	local RC=1
+	while [ $RC -ne 0 ] ; do
 		exec 3>&1
 		RUSER=$($DIALOG \
 	            --clear \
@@ -62,7 +92,11 @@ function ruser_ui() {
 	            --backtitle "$backtitle" \
 	            --inputbox "Remote account @$FQDN:" 0 0 "$RUSER" \
 		2>&1 1>&3 )
+		RC=$?
 		exec 3>&-
+
+		handle_rc_ui $RC
+		RC=$?
 	done
 }
 
