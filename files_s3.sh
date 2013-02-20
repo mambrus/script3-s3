@@ -19,8 +19,10 @@ function files_s3() {
 		grep -v README |				\
 		grep -v 'files\.s3' |			\
 		#Include only executable files, or files starting with '.' \
-		egrep '\*$|^\.[[:alpha:]]' |	\
+		#or links (very handy to have)  \
+		egrep '\*$|^\.[[:alpha:]]|@$' |	\
 		sed -e 's/\*$//' |				\
+		sed -e 's/@$//' |				\
 		#Avoid special files lingering around (vim swap-files e.t.a.) \
 		egrep -v '\.swp$|^.git/$|^.repo/$' | \
 		cat -- > files.s3
