@@ -61,7 +61,7 @@ function create_srvscript() {
 	echo 'echo; echo'										>>"$1"
 	echo 'echo Removing temporary transferred key "/tmp/id_dsa_${TS}.pub"'	>>"$1"
 	echo 'rm "/tmp/id_dsa_${TS}.pub"'										>>"$1"
-	echo 'echo Removing this script "/tmp/ssh_server_$TS.sh"'				>>"$1"
+	echo 'echo Server is removing script "/tmp/ssh_server_$TS.sh"'		>>"$1"
 	echo 'echo "~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"'	>>"$1"
 	echo 'rm "/tmp/ssh_server_$TS.sh"'						>>"$1"
 	echo 'cd $OLDPWD'										>>"$1"
@@ -125,20 +125,18 @@ function ssh_keypair() {
 	fi;
 	set -u
 
-	create_srvscript "/tmp/${SRV_SCRIPT}" "$TS"
+	create_srvscript "/tmp/local_${SRV_SCRIPT}" "$TS"
 	local_key_copy "$REMOTE_USER" "$REMOTE_SERVER" "$TS"
 
 	echo "~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"
 	echo "Transfering serverside script using the following command:"
-	echo "scp \"/tmp/${SRV_SCRIPT}" "${REMOTE_USER}@${REMOTE_SERVER}:/tmp/${SRV_SCRIPT}\""
+	echo "scp \"/tmp/local_${SRV_SCRIPT}" "${REMOTE_USER}@${REMOTE_SERVER}:/tmp/${SRV_SCRIPT}\""
 	echo "(You will need to enter password)"
 	echo "~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"
 	echo; echo
-	scp "/tmp/${SRV_SCRIPT}" "${REMOTE_USER}@${REMOTE_SERVER}:/tmp/${SRV_SCRIPT}"
+	scp "/tmp/local_${SRV_SCRIPT}" "${REMOTE_USER}@${REMOTE_SERVER}:/tmp/${SRV_SCRIPT}"
 	echo; echo
 
-	#Done with it, remove local copy
-	rm "/tmp/${SRV_SCRIPT}"
 	echo "~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"
 	echo "Running serverside script using the followin command:"
 	echo "ssh \"${REMOTE_USER}@${REMOTE_SERVER}\" \"/tmp/${SRV_SCRIPT}\""
@@ -152,6 +150,10 @@ function ssh_keypair() {
 	echo "If not, consider the workaround at this link:"
 	echo " https://bugs.launchpad.net/ubuntu/+source/openssh/+bug/201786"
 	echo "~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"
+	sleep 2
+	#Done with it, remove local copy
+	echo "[$HOSTNAME] is removing script /tmp/local_${SRV_SCRIPT}"
+	rm -f "/tmp/local_${SRV_SCRIPT}"
 }
 
 source s3.ebasename.sh
