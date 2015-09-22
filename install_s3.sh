@@ -60,12 +60,12 @@ function install_s3() {
 	#S3_PATH must be a part of SRC_FILE (the one we're installing), or it's
 	#*not* part of this s3 (but we want to install it anyway). Installing
 	#without this case will also work, but the names in ~/bin are too long as
-	#the become full path's, henche worthelss.
+	#the become full path's, hence worthless.
 
 	#In this case it's is assumed that the installer wants to give the link
 	#a name relative to where he stands. Allow that by detecting the case.
-	#NOTE: these installs will nu be uninstallable by uninstall_all.sh and
-	#need to be unistalled manually.
+	#NOTE: these installs will nu be un-installable by uninstall_all.sh and
+	#need to be un-installed manually.
 	BELONGS_TO_THIS_S3=$(echo -n "${S3_PATH};${OPWD}" | awk -F";" '{
 		rc=index($2,$1);
 		if (rc == 0)
@@ -81,7 +81,7 @@ function install_s3() {
 		set +e
 		ask_user_continue \
 		   "Install anyway (fake S3_DIR)?"\
-" NOTE: Any unistallations bust be done manually (Y/n)" \
+" NOTE: Any uninstallations bust be done manually (Y/n)" \
 		   "Installing..." \
 		   "Skipping..." \
 		   "Y"
@@ -99,7 +99,7 @@ function install_s3() {
 		exit 0
 	fi
 
-	#Make S3_PATH escapabele so it might pass sed expanded
+	#Make S3_PATH escapable so it might pass sed expanded
 	local DS3_PATH=$( echo $S3_PATH | sed -e 's/\//\\\//g' )
 
 	#Subtract the absolute path part to S3 itself and convert
@@ -116,7 +116,7 @@ function install_s3() {
 	#echo $DST_FILE
 
 	if [ ! -f $SRC_FILE ]; then
-		echo "Error: Trying to install [$SRC_FILE] which doesnt exist."
+		echo "Error: Trying to install [$SRC_FILE] which doesn't exist."
 		ask_user_continue || exit $?
 		return 1
 	fi
