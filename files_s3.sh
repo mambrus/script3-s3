@@ -23,8 +23,8 @@ function files_s3() {
 		egrep '\*$|^\.[[:alpha:]]|@$' |	\
 		sed -e 's/\*$//' |				\
 		sed -e 's/@$//' |				\
-		#Avoid special files lingering around (vim swap-files e.t.a.) \
-		egrep -v '\.swp$|^.git/$|^.repo/$' | \
+		#Avoid special files lingering around (vim swap-files, hidden directories e.t.a.) \
+		egrep -v '\.swp$|^\..*/$' | \
 		cat -- > files.s3
 	);  done
 }
