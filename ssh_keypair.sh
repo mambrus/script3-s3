@@ -15,8 +15,11 @@ if [ "X$(which expect)" == "X" ]; then
 fi
 
 backtitle="SSH key creation and remote transfer & pairing"
+
+#Defaults
 FQDN="localhost"
 RUSER="$USER"
+RPORT=22
 PASS=""
 
 function print_help() {
@@ -100,6 +103,24 @@ function ruser_ui() {
 	done
 }
 
+function rport_ui() {
+	local RC=1
+	while [ $RC -ne 0 ] ; do
+		exec 3>&1
+		RPORT=$($DIALOG \
+	            --clear \
+				--help-button \
+	            --backtitle "$backtitle" \
+	            --inputbox "Remote port:" 0 0 "$RPORT" \
+		2>&1 1>&3 )
+		RC=$?
+		exec 3>&-
+
+		handle_rc_ui $RC
+		RC=$?
+	done
+}
+
 function help_ui() {
 	TMPF=/tmp/ssh_keypair_${USER}_$(date +%y%m%d_%H%M%S.%N)
 	print_help>"${TMPF}"
@@ -144,16 +165,25 @@ case $# in
 0)
 	fqdn_ui     || exit 1
 	ruser_ui    || exit 1
+	rport_ui    || exit 1
 	password_ui || exit 1
 	;;
 1)
 	FQDN=$1
 	ruser_ui    || exit 1
+	rport_ui    || exit 1
 	password_ui || exit 1
 	;;
 2)
 	FQDN=$1
 	RUSER=$2
+	rport_ui    || exit 1
+	password_ui || exit 1
+	;;
+3)
+	FQDN=$1
+	RUSER=$2
+	RPORT=$3
 	password_ui || exit 1
 	;;
 *)
@@ -166,7 +196,7 @@ clear
 
 
 EXPECT='
-	spawn .s3..ssh_keypair.sh '"${FQDN}"' '"${RUSER}"'
+	spawn .s3..ssh_keypair.sh '"${FQDN}"' '"${RUSER}"' '"${RPORT}"'
 
 	set timeout 20
 	expect {

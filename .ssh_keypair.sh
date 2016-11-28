@@ -4,10 +4,12 @@
 # have account and access to. It will handle cases both when you have ssh
 # previously initialized or not, either on client- or server-side.
 #
-# Usage:
+# Interactive usage:
 # ssh_keypair.sh
 #    -or-
-# ssh_keypair.sh yourserver.domain server_account
+#
+# Argument usage:
+# ssh_keypair.sh yourserver.domain server_account server_port
 #
 # Simplest case scenario:
 # =======================
@@ -73,7 +75,8 @@ function create_srvscript() {
 function local_key_copy() {
 	local USER="$1"
 	local REMOTE="$2"
-	local TS="$3"
+	local PORT="$3"
+	local TS="$4"
 
 	echo; echo
 	if [ ! -d ~/.ssh ]; then
@@ -93,22 +96,23 @@ function local_key_copy() {
 
 	echo "~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"
 	echo "Transfering your public key to the server using the following command:"
-	echo "scp ~/.ssh/id_dsa.pub ${USER}@${REMOTE}:/tmp/id_dsa_${TS}.pub"
+	echo "scp -P${PORT} ~/.ssh/id_dsa.pub ${USER}@${REMOTE}:/tmp/id_dsa_${TS}.pub"
 	echo "(You will need to enter password)"
 	echo "~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"
 	echo; echo
-	scp ~/.ssh/id_dsa.pub ${USER}@${REMOTE}:/tmp/id_dsa_${TS}.pub
+	scp -P${PORT} ~/.ssh/id_dsa.pub ${USER}@${REMOTE}:/tmp/id_dsa_${TS}.pub
 	echo; echo
 }
 
-# Wrapper to the script itself. I.e. you can use this function as it would be the script itself
-# if you source it.
+# Wrapper to the script itself. I.e. you can use this function as it would
+# be the script itself if you source it.
 function ssh_keypair() {
 	set -e
 
 	local SRV_SCRIPT
 	local REMOTE_SERVER="$1"
 	local REMOTE_USER="$2"
+	local REMOTE_PORT="$3"
 
 	if [ -z "$TS" ]; then
 		local TS=$(date "+%y%m%d_%H%M%S")
@@ -123,26 +127,36 @@ function ssh_keypair() {
 		echo -n "Enter the account to use at the server: "
 		read REMOTE_USER
 	fi;
+	if [ -z "$REMOTE_PORT" ]; then
+		echo -n "Enter remote port (empty = use default port 22): "
+		read REMOTE_PORT
+	fi;
 	set -u
 
+	if [ "X${REMOTE_PORT}" == "X" ]; then
+		local REMOTE_PORT=22
+	fi
+
 	create_srvscript "/tmp/local_${SRV_SCRIPT}" "$TS"
-	local_key_copy "$REMOTE_USER" "$REMOTE_SERVER" "$TS"
+	local_key_copy "$REMOTE_USER" "$REMOTE_SERVER" "$REMOTE_PORT" "$TS"
 
 	echo "~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"
-	echo "Transfering serverside script using the following command:"
-	echo "scp \"/tmp/local_${SRV_SCRIPT}" "${REMOTE_USER}@${REMOTE_SERVER}:/tmp/${SRV_SCRIPT}\""
+	echo "Transferring server-side script using the following command:"
+	echo -n -P"${REMOTE_PORT}" "scp \"/tmp/local_${SRV_SCRIPT}"
+	echo "${REMOTE_USER}@${REMOTE_SERVER}:/tmp/${SRV_SCRIPT}\""
 	echo "(You will need to enter password)"
 	echo "~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"
 	echo; echo
-	scp "/tmp/local_${SRV_SCRIPT}" "${REMOTE_USER}@${REMOTE_SERVER}:/tmp/${SRV_SCRIPT}"
+	scp -P"${REMOTE_PORT}" "/tmp/local_${SRV_SCRIPT}" \
+		"${REMOTE_USER}@${REMOTE_SERVER}:/tmp/${SRV_SCRIPT}"
 	echo; echo
 
 	echo "~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"
-	echo "Running serverside script using the followin command:"
-	echo "ssh \"${REMOTE_USER}@${REMOTE_SERVER}\" \"/tmp/${SRV_SCRIPT}\""
+	echo "Running server-side script using the following command:"
+	echo "ssh -p${REMOTE_PORT} \"${REMOTE_USER}@${REMOTE_SERVER}\" \"/tmp/${SRV_SCRIPT}\""
 	echo "(You will need to enter password)"
 	echo "~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"
-	ssh "${REMOTE_USER}@${REMOTE_SERVER}" "/tmp/${SRV_SCRIPT}"
+	ssh -p${REMOTE_PORT} "${REMOTE_USER}@${REMOTE_SERVER}" "/tmp/${SRV_SCRIPT}"
 	echo; echo
 	echo "~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"
 	echo "Key-pair binding with ${REMOTE_USER}@${REMOTE_SERVER} is done"
