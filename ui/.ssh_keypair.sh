@@ -2,11 +2,11 @@
 # This is not even a script, it's dumb and can't exist alone. It is purely
 # meant for being included into the main script.
 
-: ${KEY_TYPE-"RSA"}
-: ${FQDN-"localhost"}
-: ${RUSER-"$USER"}
-: ${RPORT-22}
-: ${PASS-""}
+: ${KEY_TYPE="RSA"}
+: ${FQDN="localhost"}
+: ${RUSER="$USER"}
+: ${RPORT=22}
+: ${PASS=""}
 : ${DIALOG=dialog}
 
 function print_help() {
