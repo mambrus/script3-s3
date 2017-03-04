@@ -1,11 +1,5 @@
 #!/bin/bash
 
-SSH_KEYPAIR_SH_INFO=$(basename $(readlink -f $0))
-#unset $SSH_KEYPAIR_SH
-echo $SSH_KEYPAIR_SH
-source s3.ebasename.sh
-ebasename $0
-
 SSH_KEYPAIR_SCRIPT_DIR=$(dirname $(readlink -f $0))
 THIS_SH=$(basename $(readlink -f $0))
 source ${SSH_KEYPAIR_SCRIPT_DIR}/ui/.ssh_keypair.sh
