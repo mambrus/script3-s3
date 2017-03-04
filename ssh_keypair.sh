@@ -10,8 +10,6 @@ SSH_KEYPAIR_SCRIPT_DIR=$(dirname $(readlink -f $0))
 THIS_SH=$(basename $(readlink -f $0))
 source ${SSH_KEYPAIR_SCRIPT_DIR}/ui/.ssh_keypair.sh
 
-: ${DIALOG=dialog}
-
 if [ "X$TEXT_MODE" == "Xyes" ]; then
 	exec .s3..ssh_keypair.sh "${FQDN}" "${RUSER}" "${RPORT}"
 fi
