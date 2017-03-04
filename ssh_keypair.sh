@@ -4,6 +4,8 @@ SSH_KEYPAIR_SCRIPT_DIR=$(dirname $(readlink -f $0))
 THIS_SH=$(basename $(readlink -f $0))
 source ${SSH_KEYPAIR_SCRIPT_DIR}/ui/.ssh_keypair.sh
 
+export KEY_TYPE
+
 if [ "X$TEXT_MODE" == "Xyes" ]; then
 	exec .s3..ssh_keypair.sh "${FQDN}" "${RUSER}" "${RPORT}"
 fi
@@ -200,18 +202,27 @@ EXPECT='
 	set timeout 20
 	expect {
 		"(yes/no)" {
+			send_user ">>>Sending \"yes\"<<<"
 			send "yes\r"
 			exp_continue
 		}
 		"id_dsa):" {
+			send_user ">>>Sending <ENTER><<<"
+			send "\r"
+			exp_continue
+		}
+		"id_rsa):" {
+			send_user ">>>Sending <ENTER><<<"
 			send "\r"
 			exp_continue
 		}
 		"passphrase):" {
+			send_user ">>>Sending <ENTER><<<"
 			send "\r"
 			exp_continue
 		}
 		"passphrase again:" {
+			send_user ">>>Sending <ENTER><<<"
 			send "\r"
 			exp_continue
 		}
