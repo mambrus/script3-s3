@@ -19,13 +19,16 @@ SYNOPSIS
                     [[user@]host[:port]] [host] [user] [port]
 
 DESCRIPTION
-    This simple script helps you create ssh key-pair with a server which you
-    have account and access to. It will handle cases both when you have ssh
-    previously initialized or not, either on client- or server-side.
+    This simple script helps you create and exchange ssh key-pairs with a
+    server which you have account and access to. It will handle cases both
+    when you have ssh previously initialized or not, either on client- or
+    server-side. It handles the nitty-gritty file-permission details that
+    are such a common reason for why people tend to spend so much time
+    setting up.
 
     Script can be used both in interactive and command-line mode with or
     without an GUI. GUI is default, but script will fall back to text if
-    dependencies are not installed or if forced using -t option.
+    utilities which are needed for GUI operation are not installed.
 
     Interactive text-mode is the fall-back if neither arguments nor options
     are given or id -i flag is given.
@@ -49,15 +52,15 @@ EXECUTION
 
 
 OPTIONS
-    -d      Force DSA keys (default)
+    -d      Use DSA keys (default)
 
-    -r      Force RSA keys
+    -r      Use RSA keys
 
-    -i      Force use of interactive text-mode (-t is implicit)
+    -i      Interactive text-mode (-t is implicit)
 
-    -n      Force use of non-interactive text-mode (-t is implicit)
+    -n      Non-interactive text-mode (-t is implicit)
 
-    -t      Force use of text mode. I.e. prevent trying to deploy GUI
+    -t      Force text mode. I.e. prevent trying to deploy GUI
 
     -H  host
             *host* is the remote machine to exchange keys with
