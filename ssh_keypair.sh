@@ -1,6 +1,20 @@
 #!/bin/bash
 
+SSH_KEYPAIR_SH_INFO=$(basename $(readlink -f $0))
+#unset $SSH_KEYPAIR_SH
+echo $SSH_KEYPAIR_SH
+source s3.ebasename.sh
+ebasename $0
+
+SSH_KEYPAIR_SCRIPT_DIR=$(dirname $(readlink -f $0))
+THIS_SH=$(basename $(readlink -f $0))
+source ${SSH_KEYPAIR_SCRIPT_DIR}/ui/.ssh_keypair.sh
+
 : ${DIALOG=dialog}
+
+if [ "X$TEXT_MODE" == "Xyes" ]; then
+	exec .s3..ssh_keypair.sh "${FQDN}" "${RUSER}" "${RPORT}"
+fi
 
 if [ "X$(which "$DIALOG")" == "X" ]; then
 	echo "Neither dialog nor xdialog installed."\
@@ -16,16 +30,9 @@ fi
 
 backtitle="SSH key creation and remote transfer & pairing"
 
-#Defaults
-FQDN="localhost"
-RUSER="$USER"
-RPORT=22
-PASS=""
-
 function print_help() {
-	cat $(which .s3..ssh_keypair.sh) | \
-	sed -ne "2,/SSH_KEYPAIR_SH/P" | \
-	grep '^#' | sed -e 's/^#//'
+	sed -ne /EOF/,/EOF/P ${SSH_KEYPAIR_SCRIPT_DIR}/ui/.ssh_keypair.sh | \
+		tail -n +2 | head -n -1
 }
 
 function handle_rc_ui() {
