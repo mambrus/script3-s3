@@ -52,12 +52,12 @@ function password_ui() {
 	while [ $RC -ne 0 ] ; do
 		exec 3>&1
 		PASS=$($DIALOG \
-        	    --clear \
-				--help-button \
-				--title "PASS" \
-            	--backtitle "$BACKTITLE" \
-            	--insecure \
-            	--passwordbox "\n${RUSER}@${FQDN} password:" 0 0 "$PASS" \
+			--clear \
+			--help-button \
+			--title "PASS" \
+			--backtitle "$BACKTITLE" \
+			--insecure \
+			--passwordbox "\n${RUSER}@${FQDN} password:" 0 0 "$PASS" \
 		2>&1 1>&3 )
 		RC=$?
 		exec 3>&-
@@ -72,11 +72,11 @@ function fqdn_ui() {
 	while [ $RC -ne 0 ] ; do
 		exec 3>&1
 		FQDN=$($DIALOG \
-	            --clear \
-				--help-button \
-				--title "FQDN" \
-	            --backtitle "$BACKTITLE" \
-	            --inputbox "\nRemote host-name:" 0 0 "$FQDN" \
+			--clear \
+			--help-button \
+			--title "FQDN" \
+			--backtitle "$BACKTITLE" \
+			--inputbox "\nRemote host-name:" 0 0 "$FQDN" \
 		2>&1 1>&3 )
 		RC=$?
 		exec 3>&-
@@ -91,11 +91,11 @@ function ruser_ui() {
 	while [ $RC -ne 0 ] ; do
 		exec 3>&1
 		RUSER=$($DIALOG \
-	            --clear \
-				--help-button \
-				--title "RUSER" \
-	            --backtitle "$BACKTITLE" \
-	            --inputbox "\nRemote account @$FQDN:" 0 0 "$RUSER" \
+			--clear \
+			--help-button \
+			--title "RUSER" \
+			--backtitle "$BACKTITLE" \
+			--inputbox "\nRemote account @$FQDN:" 0 0 "$RUSER" \
 		2>&1 1>&3 )
 		RC=$?
 		exec 3>&-
@@ -110,11 +110,11 @@ function rport_ui() {
 	while [ $RC -ne 0 ] ; do
 		exec 3>&1
 		RPORT=$($DIALOG \
-	            --clear \
-				--help-button \
-				--title "RPORT" \
-	            --backtitle "$BACKTITLE" \
-	            --inputbox "\nRemote port:" 0 0 "$RPORT" \
+			--clear \
+			--help-button \
+			--title "RPORT" \
+			--backtitle "$BACKTITLE" \
+			--inputbox "\nRemote port:" 0 0 "$RPORT" \
 		2>&1 1>&3 )
 		RC=$?
 		exec 3>&-
@@ -133,7 +133,7 @@ function keytype_ui() {
 			--clear \
 			--item-help \
 			--help-button \
-	        --backtitle "$BACKTITLE" \
+			--backtitle "$BACKTITLE" \
 			--title "KEY_TYPE" \
 			--menu "\n\
 			  Choose key-type:" 10 55 4 \
@@ -157,13 +157,13 @@ function help_ui() {
 	print_help>"${TMPF}"
 
 	$DIALOG \
-            --backtitle "$BACKTITLE" \
-            --keep-window \
-            --no-collapse \
-            --cr-wrap \
-            --trim \
-            --title "Manpage - ssh_keypair" \
-            --textbox "${TMPF}" 20 80
+			--backtitle "$BACKTITLE" \
+			--keep-window \
+			--no-collapse \
+			--cr-wrap \
+			--trim \
+			--title "Manpage - ssh_keypair" \
+			--textbox "${TMPF}" 20 80
 }
 
 function syntax_ui() {
@@ -171,14 +171,14 @@ function syntax_ui() {
 	params="${@}"
 
 	$DIALOG \
-            --clear \
-            --backtitle "$BACKTITLE" \
+			--clear \
+			--backtitle "$BACKTITLE" \
 			--no-label "Manpage" \
 			--yes-label "Syntax" \
 			--title "Syntax error:" \
-            --yesno "$(basename $0) ${params}" 0 0
-            case $? in
-            0)
+			--yesno "$(basename $0) ${params}" 0 0
+			case $? in
+			0)
 				$DIALOG \
 					--title "Syntax:" \
 					--msgbox "$(basename $0) [<FQDN>] [<user>]" 5 45
@@ -186,8 +186,8 @@ function syntax_ui() {
 				echo "Usage: $(basename $0) [<FQDN>] [<user>]" 1>&2
 				echo "Please try again..." 1>&2
 				exit 1
-                break
-            	;;
+				break
+				;;
 			esac
 	help_ui
 }
