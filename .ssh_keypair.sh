@@ -10,8 +10,6 @@ if [ -z $SSH_KEYPAIR_SH ]; then
 
 SSH_KEYPAIR_SH="ssh_keypair.sh"
 
-: ${KEY_TYPE="DSA"}
-
 # Creates a DSA script that will go on the server-side
 function create_DSA_srvscript() {
 	echo "#! /bin/bash"                                       >"$1"
@@ -169,43 +167,55 @@ function local_RSA_key_copy() {
 }
 
 # Wrapper to the script itself. I.e. you can use this function as it would
-# be the script itself if you source it.
+# be the script itself if you source it. Function expects arguments in
+# certain order. Arguments counting from right (least specific) may be
+# omitted in which case function will interactively read them from stdin.
 function ssh_keypair() {
 	set -e
 
-	if [ "$KEY_TYPE" == "DSA" ] || [ "$KEY_TYPE" == "RSA" ]; then
-		:
-	else
-		echo 'KEY_TYPE *must* be set to either "DSA" or "RSA"' >&2
-		exit 1
-	fi
-
 	local SRV_SCRIPT
-	local REMOTE_SERVER="$1"
-	local REMOTE_USER="$2"
-	local REMOTE_PORT="$3"
+	local REMOTE_SERVER=$1
+	local REMOTE_USER=$2
+	local REMOTE_PORT=$3
+	local KEY_TYPE=$4
 
 	if [ -z "$TS" ]; then
 		local TS=$(date "+%y%m%d_%H%M%S")
 	fi
 
 	SRV_SCRIPT=ssh_server_"$TS".sh
-	if [ -z "$REMOTE_SERVER" ]; then
+	if [ "X${REMOTE_SERVER}" == "X" ]; then
 		echo -n "Enter the remote server name (FQDN): "
 		read REMOTE_SERVER
 	fi;
-	if [ -z "$REMOTE_USER" ]; then
+	if [ "X${REMOTE_USER}" == "X" ]; then
 		echo -n "Enter the account to use at the server: "
 		read REMOTE_USER
 	fi;
-	if [ -z "$REMOTE_PORT" ]; then
+	if [ "X${REMOTE_PORT}" == "X" ]; then
 		echo -n "Enter remote port (empty = use default port 22): "
 		read REMOTE_PORT
 	fi;
+	if [ "X${KEY_TYPE}" == "X" ]; then
+		echo -n "Enter remote port (empty = use default DSA): "
+		read KEY_TYPE
+	fi;
 	set -u
 
+	# Default those that are defaultable
 	if [ "X${REMOTE_PORT}" == "X" ]; then
 		local REMOTE_PORT=22
+	fi
+	if [ "X${KEY_TYPE}" == "X" ]; then
+		local KEY_TYPE="DSA"
+	fi
+
+	# Sanity-test some
+	if [ "$KEY_TYPE" == "DSA" ] || [ "$KEY_TYPE" == "RSA" ]; then
+		:
+	else
+		echo 'KEY_TYPE *must* be set to either "DSA" or "RSA"' >&2
+		exit 1
 	fi
 
 	if [ "$KEY_TYPE" == "DSA" ]; then

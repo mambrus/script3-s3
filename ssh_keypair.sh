@@ -4,10 +4,8 @@ SSH_KEYPAIR_SCRIPT_DIR=$(dirname $(readlink -f $0))
 THIS_SH=$(basename $(readlink -f $0))
 source ${SSH_KEYPAIR_SCRIPT_DIR}/ui/.ssh_keypair.sh
 
-export KEY_TYPE
-
 if [ "X$TEXT_MODE" == "Xyes" ]; then
-	exec .s3..ssh_keypair.sh "${FQDN}" "${RUSER}" "${RPORT}"
+	exec .s3..ssh_keypair.sh "${FQDN}" "${RUSER}" "${RPORT}" "${KEY_TYPE}"
 fi
 
 if [ "X$(which "$DIALOG")" == "X" ]; then
@@ -22,7 +20,7 @@ if [ "X$(which expect)" == "X" ]; then
 	exec .s3..ssh_keypair.sh "${@}"
 fi
 
-backtitle="SSH key creation and remote transfer & pairing"
+BACKTITLE="SSH key creation and remote transfer & pairing"
 
 function print_help() {
 	sed -ne /EOF/,/EOF/P ${SSH_KEYPAIR_SCRIPT_DIR}/ui/.ssh_keypair.sh | \
@@ -56,9 +54,10 @@ function password_ui() {
 		PASS=$($DIALOG \
         	    --clear \
 				--help-button \
-            	--backtitle "$backtitle" \
+				--title "PASS" \
+            	--backtitle "$BACKTITLE" \
             	--insecure \
-            	--passwordbox "${RUSER}@${FQDN} password:" 0 0 "$PASS" \
+            	--passwordbox "\n${RUSER}@${FQDN} password:" 0 0 "$PASS" \
 		2>&1 1>&3 )
 		RC=$?
 		exec 3>&-
@@ -75,8 +74,9 @@ function fqdn_ui() {
 		FQDN=$($DIALOG \
 	            --clear \
 				--help-button \
-	            --backtitle "$backtitle" \
-	            --inputbox "Remote host-name:" 0 0 "$FQDN" \
+				--title "FQDN" \
+	            --backtitle "$BACKTITLE" \
+	            --inputbox "\nRemote host-name:" 0 0 "$FQDN" \
 		2>&1 1>&3 )
 		RC=$?
 		exec 3>&-
@@ -93,8 +93,9 @@ function ruser_ui() {
 		RUSER=$($DIALOG \
 	            --clear \
 				--help-button \
-	            --backtitle "$backtitle" \
-	            --inputbox "Remote account @$FQDN:" 0 0 "$RUSER" \
+				--title "RUSER" \
+	            --backtitle "$BACKTITLE" \
+	            --inputbox "\nRemote account @$FQDN:" 0 0 "$RUSER" \
 		2>&1 1>&3 )
 		RC=$?
 		exec 3>&-
@@ -111,8 +112,37 @@ function rport_ui() {
 		RPORT=$($DIALOG \
 	            --clear \
 				--help-button \
-	            --backtitle "$backtitle" \
-	            --inputbox "Remote port:" 0 0 "$RPORT" \
+				--title "RPORT" \
+	            --backtitle "$BACKTITLE" \
+	            --inputbox "\nRemote port:" 0 0 "$RPORT" \
+		2>&1 1>&3 )
+		RC=$?
+		exec 3>&-
+
+		handle_rc_ui $RC
+		RC=$?
+	done
+}
+
+function keytype_ui() {
+	local RC=1
+	while [ $RC -ne 0 ] ; do
+		exec 3>&1
+		KEY_TYPE=$($DIALOG \
+			--default-item "$KEY_TYPE" \
+			--clear \
+			--item-help \
+			--help-button \
+	        --backtitle "$BACKTITLE" \
+			--title "KEY_TYPE" \
+			--menu "\n\
+			  Choose key-type:" 10 55 4 \
+			"DSA" \
+				"Digital Signature Algorithm" \
+				"FIPS 186-4 2013" \
+			"RSA" \
+				"Ron Rivest, Adi Shamir, and Leonard Adleman" \
+				"U.S. Patent 4,405,829" \
 		2>&1 1>&3 )
 		RC=$?
 		exec 3>&-
@@ -127,7 +157,7 @@ function help_ui() {
 	print_help>"${TMPF}"
 
 	$DIALOG \
-            --backtitle "$backtitle" \
+            --backtitle "$BACKTITLE" \
             --keep-window \
             --no-collapse \
             --cr-wrap \
@@ -142,7 +172,7 @@ function syntax_ui() {
 
 	$DIALOG \
             --clear \
-            --backtitle "$backtitle" \
+            --backtitle "$BACKTITLE" \
 			--no-label "Manpage" \
 			--yes-label "Syntax" \
 			--title "Syntax error:" \
@@ -167,24 +197,35 @@ case $# in
 	fqdn_ui     || exit 1
 	ruser_ui    || exit 1
 	rport_ui    || exit 1
+	keytype_ui  || exit 1
 	password_ui || exit 1
 	;;
 1)
 	FQDN=$1
 	ruser_ui    || exit 1
 	rport_ui    || exit 1
+	keytype_ui  || exit 1
 	password_ui || exit 1
 	;;
 2)
 	FQDN=$1
 	RUSER=$2
 	rport_ui    || exit 1
+	keytype_ui  || exit 1
 	password_ui || exit 1
 	;;
 3)
 	FQDN=$1
 	RUSER=$2
 	RPORT=$3
+	keytype_ui  || exit 1
+	password_ui || exit 1
+	;;
+4)
+	FQDN=$1
+	RUSER=$2
+	RPORT=$3
+	KEY_TYPE=$4
 	password_ui || exit 1
 	;;
 *)
@@ -197,7 +238,7 @@ clear
 
 
 EXPECT='
-	spawn .s3..ssh_keypair.sh '"${FQDN}"' '"${RUSER}"' '"${RPORT}"'
+	spawn .s3..ssh_keypair.sh '"${FQDN}"' '"${RUSER}"' '"${RPORT}"' '"${KEY_TYPE}"'
 
 	set timeout 20
 	expect {

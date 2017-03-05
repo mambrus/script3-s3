@@ -1,6 +1,5 @@
 # Command-line UI part of all ssh_keypair tool
-# This is not even a script, it's dumb and can't exist alone. It is purely
-# meant for being included into the main script.
+# This file contains command-line argument and options parsing, and man-page.
 
 : ${KEY_TYPE="RSA"}
 : ${FQDN="localhost"}
@@ -115,7 +114,7 @@ ENVIRONMENT
         Password for remote-side user account
 
     DIALOG
-        Name of dialog-utility. $THUS_SH supports dialog and xdialog.
+        Name of dialog-utility. $THIS_SH supports dialog and xdialog.
 
 DEPENDENCIES
     $THIS_SH is dependent of underlying utilities to achieve as high
