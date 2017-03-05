@@ -89,7 +89,7 @@ function create_RSA_srvscript() {
 }
 
 # If necessary, Creates a local DSA public key. Then transfers it
-# to the the server side
+# to the server side
 function local_DSA_key_copy() {
 	local USER="$1"
 	local REMOTE="$2"
@@ -129,7 +129,7 @@ function local_DSA_key_copy() {
 }
 
 # If necessary, Creates a local RDA public key. Then transfers it
-# to the the server side
+# to the server side
 function local_RSA_key_copy() {
 	local USER="$1"
 	local REMOTE="$2"

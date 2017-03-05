@@ -34,8 +34,9 @@ DESCRIPTION
     are given or id -i flag is given.
 
 EXECUTION
+
     Simplest case scenario:
-    =======================
+
     If you have initialized ssh on both sides before, all you will need to do
     when running the script is to enter your password 3-times (the script
     itself does not ask you for you password, it's the ssh client used by the
@@ -43,13 +44,12 @@ EXECUTION
     compromised in any way).
 
     Worst case scenario:
-    ====================
+
     If you haven't initialized ssh on either client or server side, this script
     will run the ssh init procedure for you. In such case, READ carefully what
     ssh is asking you to to. If it asks you for a pass-phrase, just press
     <enter>, if it asks you to answer “yes/no”, answer “yes” (you have to type
     in the answer, there's no default).
-
 
 OPTIONS
     -d      Use DSA keys (default)
@@ -115,7 +115,17 @@ ENVIRONMENT
         Password for remote-side user account
 
     DIALOG
-        Name of dialog-utility. Script supports dialog and xdialog.
+        Name of dialog-utility. $THUS_SH supports dialog and xdialog.
+
+DEPENDENCIES
+    $THIS_SH is dependent of underlying utilities to achieve as high
+    level of automation as possible. It will also aim to work even if
+    the underlying utilities are not installed by falling back at simpler
+    modes of operation. The following utilities are preferably installed,
+    with importance from left to right, for full automation:
+
+        expect dialog
+
 
 AUTHOR
     Michael Ambrus <michael.ambrus at gmail.com>
