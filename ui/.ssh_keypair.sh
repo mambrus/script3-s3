@@ -6,6 +6,7 @@
 : ${RUSER="$USER"}
 : ${RPORT=22}
 : ${PASS=""}
+: ${REUSE_PWD="no"}
 : ${DIALOG=dialog}
 
 function print_help() {
@@ -60,6 +61,8 @@ OPTIONS
     -n      Non-interactive text-mode (-t is implicit)
 
     -t      Force text mode. I.e. prevent trying to deploy GUI
+
+    -r      Try to reuse password between iterations
 
     -H  host
             *host* is the remote machine to exchange keys with
@@ -160,6 +163,9 @@ EOF
 			;;
 		t)
 			TEXT_MODE="yes"
+			;;
+		r)
+			REUSE_PWD="yes"
 			;;
 		H)
 			FQDN="${OPTARG}"
