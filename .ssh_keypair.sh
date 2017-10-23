@@ -242,12 +242,12 @@ function ssh_keypair() {
 	echo 	"~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"\
 			"~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"
 	echo "Running server-side script using the following command:"
-	echo "ssh -p${REMOTE_PORT} \"${REMOTE_USER}@${REMOTE_SERVER}\""\
+	echo "ssh -x -p${REMOTE_PORT} \"${REMOTE_USER}@${REMOTE_SERVER}\""\
 			" \"/tmp/${SRV_SCRIPT}\""
 	echo "(You will need to enter password)"
 	echo 	"~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"\
 			"~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"
-	ssh -p${REMOTE_PORT} "${REMOTE_USER}@${REMOTE_SERVER}" "/tmp/${SRV_SCRIPT}"
+	ssh -x -p${REMOTE_PORT} "${REMOTE_USER}@${REMOTE_SERVER}" "/tmp/${SRV_SCRIPT}"
 	echo; echo
 	echo 	"~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"\
 			"~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~ ~-~"
